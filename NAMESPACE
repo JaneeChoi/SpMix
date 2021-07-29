@@ -3,4 +3,5 @@
 export(sp.mix.1D)
 export(sp.mix.multi)
 importFrom(LogConcDEAD,mlelcd)
+importFrom(logcondens,activeSetLogCon)
 importFrom(mvtnorm,dmvnorm)

@@ -1,4 +1,4 @@
-#' @importFrom LogConcDEAD mlelcd
+#' @importFrom logcondens activeSetLogCon
 #'
 #' @title Estimates a Semiparametric Mixture Density for 1-d data
 #'
@@ -20,6 +20,8 @@
 #' @export
 sp.mix.1D <- function(z, tol = 5.0e-6, max.iter = 30, doplot = TRUE, thre.localFDR = 0.2)
 {
+  #library(LogConcDEAD)
+  library(logcondens)
 
   z <- as.numeric(z)
   n <- length(z)
@@ -52,15 +54,11 @@ sp.mix.1D <- function(z, tol = 5.0e-6, max.iter = 30, doplot = TRUE, thre.localF
     new.p.0 <- mean(new.gam, na.rm = TRUE)
 
     new.f1.tilde <- rep(0, n)
-    which.z <- new.gam <= .9
+    which.z <- new.gam <= .95
     weight <- 1 - new.gam[which.z]
     weight <- weight/sum(weight)
-    new.f1.tilde[which.z] <- exp(LogConcDEAD::mlelcd(z[which.z], w = weight)$logMLE)
-    #new.f1.tilde[which.z] <- exp(fmlcd(matrix(z[which.z],
-    #                                          nrow = length(weight),
-    #                                          ncol = 1),
-    #                                   w = weight[which.z]/sum(weight[which.z]))$logMLE)
-
+    lcd <- activeSetLogCon(x = z[which.z], w = w)
+    new.f1.tilde[which.z] <- exp(lcd$phi)[rank(z[which.z])]
     which.gam <- (new.gam <= 0.9)*(new.gam >= 0.01)
     diff <- max(abs(gam - new.gam)[which.gam])
     converged <- (diff <= tol)
