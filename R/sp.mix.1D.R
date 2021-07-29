@@ -57,7 +57,7 @@ sp.mix.1D <- function(z, tol = 5.0e-6, max.iter = 30, doplot = TRUE, thre.localF
     which.z <- new.gam <= .95
     weight <- 1 - new.gam[which.z]
     weight <- weight/sum(weight)
-    lcd <- activeSetLogCon(x = z[which.z], w = w)
+    lcd <- activeSetLogCon(x = z[which.z], w = weight)
     new.f1.tilde[which.z] <- exp(lcd$phi)[rank(z[which.z])]
     which.gam <- (new.gam <= 0.9)*(new.gam >= 0.01)
     diff <- max(abs(gam - new.gam)[which.gam])
