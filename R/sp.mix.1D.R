@@ -1,25 +1,42 @@
 #' @importFrom logcondens activeSetLogCon
 #'
-#' @title LocalFDR estimation for 1-dimensional lists of z-values
+#' @title LocalFDR estimation for 1-dimensional z-values
 #'
-#' @description \code{sp.mix.1D} returns LocalFDR estimates and semiparametric mixture density estimates for given 1-dimensional lists of z-values, which are the probit-transformed p-values.
-#' For the hypothesis testing \code{sp.mix.1D} uses a two-component semiparametric mixture model to estimate the LocalFDR from the p-values. The two pillars of the proposed approach are Efron’s empirical null principle and log-concave density estimation for the alternative distribution.
-#' Estimated prior, null and alternative probability for given points and estimated LocalFDR are returned.
+#' @description \code{sp.mix.1D} returns LocalFDR estimates and semiparametric
+#' mixture density estimates for given 1-dimensional lists of z-values, which
+#' are the probit-transformed p-values.
+#' For the hypothesis testing \code{sp.mix.1D} uses a two-component semiparametric
+#' mixture model to estimate the LocalFDR from the p-values. The two pillars of
+#' the proposed approach are Efron’s empirical null principle and log-concave
+#' density estimation for the alternative distribution.
+#'
 #'
 #' @param z Vector which each element indicates z-values, probit-transformed p-values.
-#' @param tol Stopping criteria for the EM algorithm. If maximum absolute difference of current and previous gamma value is smaller than tol, i.e. \eqn{max_i |\gamma_i^{(k+1)}-\gamma_i^{(k)} <tol}, for k-th step, then optimization stops. (default: 5e-6)
+#' @param tol Stopping criteria for the EM algorithm. If maximum absolute difference
+#' of current and previous gamma value is smaller than tol,
+#' i.e. \eqn{max_i |\gamma_i^{(k+1)}-\gamma_i^{(k)} <tol}, for k-th step, then optimization stops. (default: 5e-6)
 #' @param max.iter Maximum number of iterations in the EM algorithm. (default: 30)
-#' @param doplot Boolean parameter that draws histogram and fitted lines for estimated density, if TRUE. (default: TRUE)
-#' @param thre.localFDR Threshold of LocalFDR which is used for calculation of false positive rate (FPR) and sensitivity with the threshold set to be \eqn{fdr \leq thre.localFDR}. (default: 0.2)
+#' @param doplot Boolean parameter that draws histogram and fitted lines for estimated density,
+#' if TRUE. (default: TRUE)
+#' @param thre.localFDR Threshold of LocalFDR which is used for calculation of
+#' false positive rate (FPR) and sensitivity with the threshold set to be
+#' \eqn{fdr \leq thre.localFDR}. (default: 0.2)
+#' @param thre.z Threshold value which only z-values smaller than thre.z
+#' are used to compute the log-concave estimates f_1 in M-step.
+#' @param Uthre.gam Upper threshold of gamma which are used to compute stopping criteria for the EM algorithm.
+#' @param Lthre.gam Lower threshold of gamma which are used to compute stopping criteria for the EM algorithm.
 #'
-#' @return Parametrization of f(x) in terms of hyperplanes and function
-#'   evaluations y = log(f(x)) \item{aOpt, bOpt}{Analytically normalized
-#'   parameters of f(x).} \item{logLike}{Log-likelihood of f(x)} \item{y}{Vector
-#'   with values y_i = log(f(X_)) of the normalized density (\eqn{logLike =
-#'   \sum(y_i)}).} \item{aOptSparse, bOptSparse}{Sparse parametrization
-#'   normalized on the integration grid.}
+#'
+#' @return Estimates of semiparametric mixture model for f for given z-values.
+#'
+#'   \item{p.0}{Prior probability for null distribution}
+#'   \item{mu.0 sig.0}{Parameter estimates of normal null distribution, N(mu.0, sig.0^2)}
+#'   \item{f}{Probability estimates of semiparametric mixture model for each z-value point.}
+#'   \item{localfdr}{LocalFDR estimates for given z-values}
+#'   \item{iter}{Number of iterations of EM algorithm to compute LocalFDR.}
+#'
 #' @export
-sp.mix.1D <- function(z, tol = 5.0e-6, max.iter = 30, doplot = TRUE, thre.localFDR = 0.2)
+sp.mix.1D <- function(z, tol = 5.0e-6, max.iter = 30, doplot = TRUE, thre.localFDR = 0.2, thre.z = 0.95, Uthre.gam = 0.9, Lthre.gam = 0.01)
 {
   #library(LogConcDEAD)
   library(logcondens)
@@ -55,12 +72,12 @@ sp.mix.1D <- function(z, tol = 5.0e-6, max.iter = 30, doplot = TRUE, thre.localF
     new.p.0 <- mean(new.gam, na.rm = TRUE)
 
     new.f1.tilde <- rep(0, n)
-    which.z <- new.gam <= .95
+    which.z <- new.gam <= thre.z
     weight <- 1 - new.gam[which.z]
     weight <- weight/sum(weight)
     lcd <- activeSetLogCon(x = z[which.z], w = weight)
     new.f1.tilde[which.z] <- exp(lcd$phi)[rank(z[which.z])]
-    which.gam <- (new.gam <= 0.9)*(new.gam >= 0.01)
+    which.gam <- (new.gam <= Uthre.gam)*(new.gam >= Lthre.gam)
     diff <- max(abs(gam - new.gam)[which.gam])
     converged <- (diff <= tol)
     cat("   EM iteration:", k, ", Change in 1dfdr fit = ", round(diff, 5), "\n")
