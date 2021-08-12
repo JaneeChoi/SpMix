@@ -2,21 +2,20 @@
 % Please edit documentation in R/sp.mix.1D.R
 \name{sp.mix.1D}
 \alias{sp.mix.1D}
-\title{Estimates a Semiparametric Mixture Density for 1-d data}
+\title{LocalFDR estimation for 1-dimensional lists of z-values}
 \usage{
 sp.mix.1D(z, tol = 5e-06, max.iter = 30, doplot = TRUE, thre.localFDR = 0.2)
 }
 \arguments{
-\item{z}{1-dimensional vector z, probit-transformed p-values.}
+\item{z}{Vector which each element indicates z-values, probit-transformed p-values.}
 
-\item{tol}{Stopping criteria for the EM algorithm.
-Optimization stops if maximum absolute difference of is smaller than tol (default: 5.0e-6)}
+\item{tol}{Stopping criteria for the EM algorithm. If maximum absolute difference of current and previous gamma value is smaller than tol, i.e. \eqn{max_i |\gamma_i^{(k+1)}-\gamma_i^{(k)} <tol}, for k-th step, then optimization stops. (default: 5e-6)}
 
 \item{max.iter}{Maximum number of iterations in the EM algorithm. (default: 30)}
 
-\item{doplot}{If TRUE, draw histogram and fitted lines for estimated density. (default: TRUE)}
+\item{doplot}{Boolean parameter that draws histogram and fitted lines for estimated density, if TRUE. (default: TRUE)}
 
-\item{thre.localFDR}{false positive rate(FDR) and sensitivity with the threshold set to be fdr<=thre.localFDR. (default: 0.2)}
+\item{thre.localFDR}{Threshold of LocalFDR which is used for calculation of false positive rate (FPR) and sensitivity with the threshold set to be \eqn{fdr \leq thre.localFDR}. (default: 0.2)}
 }
 \value{
 Parametrization of f(x) in terms of hyperplanes and function
@@ -27,5 +26,7 @@ Parametrization of f(x) in terms of hyperplanes and function
   normalized on the integration grid.}
 }
 \description{
-\code{sp.mix.1D} returns a semiparametric mixture density estimates for given 1-d z, which are the probit-transformed p-values.
+\code{sp.mix.1D} returns LocalFDR estimates and semiparametric mixture density estimates for given 1-dimensional lists of z-values, which are the probit-transformed p-values.
+For the hypothesis testing \code{sp.mix.1D} uses a two-component semiparametric mixture model to estimate the LocalFDR from the p-values. The two pillars of the proposed approach are Efron’s empirical null principle and log-concave density estimation for the alternative distribution.
+Estimated prior, null and alternative probability for given points and estimated LocalFDR are returned.
 }

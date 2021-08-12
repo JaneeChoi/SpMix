@@ -2,15 +2,17 @@
 #' @importFrom mvtnorm dmvnorm
 #'
 #'
-#' @title Estimates a Semiparametric Mixture Density for multi-dimensional data
+#' @title LocalFDR estimation for multi-dimensional lists of z-values
 #'
-#' @description \code{sp.mix.multi} returns a semiparametric mixture density estimates for given multi-dimensional z, which are the probit-transformed p-values.
+#' @description \code{sp.mix.multi} returns LocalFDR estimates and semiparametric mixture density estimates for given multi-dimensional lists of z-values, which are the probit-transformed p-values.
+#' For the hypothesis testing \code{sp.mix.multi} uses a two-component semiparametric mixture model to estimate the LocalFDR from the p-values. The two pillars of the proposed approach are Efron’s empirical null principle and log-concave density estimation for the alternative distribution.
+#' Estimated prior, null and alternative probability for given points and estimated LocalFDR are returned.
 #'
-#' @param z Matrix which each column indicates z, probit-transformed p-values.
-#' @param tol Stopping criteria for the EM algorithm.
-#' Optimization stops if maximum absolute difference of current and previous gamma value is smaller than tol. (default: 5.0e-6)
+#'
+#' @param z Matrix which column indicates z-values, probit-transformed p-values.
+#' @param tol Stopping criteria for the EM algorithm. If maximum absolute difference of current and previous gamma value is smaller than tol, i.e. \eqn{max_i |\gamma_i^{(k+1)}-\gamma_i^{(k)} <tol}, for k-th step, then optimization stops. (default: 5e-6)
 #' @param max.iter Maximum number of iterations in the EM algorithm. (default: 30)
-#' @param mono If TRUE, monotone. (default: TRUE)
+#' @param mono If TRUE, LocalFDR is in ascending order of z-values. (default: TRUE)
 #'
 #' @return Parametrization of f(x) in terms of hyperplanes and function
 #'   evaluations y = log(f(x)) \item{aOpt, bOpt}{Analytically normalized

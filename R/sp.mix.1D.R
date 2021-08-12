@@ -1,15 +1,16 @@
 #' @importFrom logcondens activeSetLogCon
 #'
-#' @title Estimates a Semiparametric Mixture Density for 1-d data
+#' @title LocalFDR estimation for 1-dimensional lists of z-values
 #'
-#' @description \code{sp.mix.1D} returns a semiparametric mixture density estimates for given 1-d z, which are the probit-transformed p-values.
+#' @description \code{sp.mix.1D} returns LocalFDR estimates and semiparametric mixture density estimates for given 1-dimensional lists of z-values, which are the probit-transformed p-values.
+#' For the hypothesis testing \code{sp.mix.1D} uses a two-component semiparametric mixture model to estimate the LocalFDR from the p-values. The two pillars of the proposed approach are Efron’s empirical null principle and log-concave density estimation for the alternative distribution.
+#' Estimated prior, null and alternative probability for given points and estimated LocalFDR are returned.
 #'
-#' @param z 1-dimensional vector z, probit-transformed p-values.
-#' @param tol Stopping criteria for the EM algorithm.
-#' Optimization stops if maximum absolute difference of is smaller than tol (default: 5.0e-6)
+#' @param z Vector which each element indicates z-values, probit-transformed p-values.
+#' @param tol Stopping criteria for the EM algorithm. If maximum absolute difference of current and previous gamma value is smaller than tol, i.e. \eqn{max_i |\gamma_i^{(k+1)}-\gamma_i^{(k)} <tol}, for k-th step, then optimization stops. (default: 5e-6)
 #' @param max.iter Maximum number of iterations in the EM algorithm. (default: 30)
-#' @param doplot If TRUE, draw histogram and fitted lines for estimated density. (default: TRUE)
-#' @param thre.localFDR false positive rate(FDR) and sensitivity with the threshold set to be fdr<=thre.localFDR. (default: 0.2)
+#' @param doplot Boolean parameter that draws histogram and fitted lines for estimated density, if TRUE. (default: TRUE)
+#' @param thre.localFDR Threshold of LocalFDR which is used for calculation of false positive rate (FPR) and sensitivity with the threshold set to be \eqn{fdr \leq thre.localFDR}. (default: 0.2)
 #'
 #' @return Parametrization of f(x) in terms of hyperplanes and function
 #'   evaluations y = log(f(x)) \item{aOpt, bOpt}{Analytically normalized
