@@ -69,8 +69,8 @@ sp.mix.multi <- function(z, tol = 5e-6, max.iter = 30, mono = TRUE, thre.z = 0.9
     weight <- 1 - new.gam
     new.f1.tilde <- rep(0, n)
     which.z <- (new.gam <= thre.z)
-    lcd <- LogConcDEAD::mlelcd(z[which.z,], w = weight[which.z]/sum(weight[which.z]))
-    new.f1.tilde[which.z] <- exp(lcd$logMLE)
+    lcd <- fmlcd(X=z[which.z,], w = weight[which.z]/sum(weight[which.z]))
+    new.f1.tilde[which.z] <- exp(lcd$y)
 
     ## Update
     which.gam <- (new.gam <= Uthre.gam)*(new.gam >= Lthre.gam)
