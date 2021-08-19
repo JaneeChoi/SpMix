@@ -1,4 +1,4 @@
-#' @importFrom LogConcDEAD mlelcd
+#' @importFrom fmlogcondens fmlcd
 #' @importFrom mvtnorm dmvnorm
 #'
 #'
@@ -69,7 +69,7 @@ sp.mix.multi <- function(z, tol = 5e-6, max.iter = 30, mono = TRUE, thre.z = 0.9
     weight <- 1 - new.gam
     new.f1.tilde <- rep(0, n)
     which.z <- (new.gam <= thre.z)
-    lcd <- fmlcd(X=z[which.z,], w = weight[which.z]/sum(weight[which.z]))
+    lcd <- fmlogcondens::fmlcd(X=z[which.z,], w = weight[which.z]/sum(weight[which.z]))
     new.f1.tilde[which.z] <- exp(lcd$y)
 
     ## Update
