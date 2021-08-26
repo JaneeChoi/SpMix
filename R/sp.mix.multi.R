@@ -1,5 +1,5 @@
 #' @importFrom fmlogcondens fmlcd
-#' @importFrom mvtnorm dmvnorm
+#' @importFrom mclust dmvnorm
 #'
 #'
 #' @title LocalFDR estimation for multi-dimensional z-values
