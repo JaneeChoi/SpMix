@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
 Depends: R (>= 3.0)
-Imports: mvtnorm, fmlogcondens
+Imports: mvtnorm, fmlogcondens, logcondens
 Remotes: FabianRathke/fmlogcondens
 Description: Software for computing a semiparametric mixture model for local false discovery rate estimation
 License: What license is it under?
