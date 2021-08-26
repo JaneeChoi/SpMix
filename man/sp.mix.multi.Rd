@@ -48,6 +48,6 @@ mixture density estimates for given multi-dimensional lists of z-values, which
 are the probit-transformed p-values.
 For the hypothesis testing \code{sp.mix.multi} uses a two-component semiparametric
 mixture model to estimate the LocalFDR from the p-values. The two pillars of the
-proposed approach are Efron’s empirical null principle and log-concave density
+proposed approach are Efron's empirical null principle and log-concave density
 estimation for the alternative distribution.
 }
