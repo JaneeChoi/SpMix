@@ -70,7 +70,7 @@ sp.mix.multi <- function(z, tol = 5e-6, max.iter = 30, mono = TRUE, thre.z = 0.9
     new.f1.tilde <- rep(0, n)
     which.z <- (new.gam <= thre.z)
     lcd <- fmlogcondens::fmlcd(X=z[which.z,], w = weight[which.z]/sum(weight[which.z]))
-    new.f1.tilde[which.z] <- exp(lcd$y)
+    new.f1.tilde[which.z] <- exp(lcd$logMLE)
 
     ## Update
     which.gam <- (new.gam <= Uthre.gam)*(new.gam >= Lthre.gam)
