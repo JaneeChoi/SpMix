@@ -1,15 +1,34 @@
 Package: SpMix
 Type: Package
-Title: Semiparametric mixture method for local false discovery rate estimation
-Version: 1.0.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@ssomewhere.net>
-Depends: R (>= 3.0)
-Imports: mclust, fmlogcondens, logcondens
-Remotes: JaneeChoi/fmlogcondens
-Description: Software for computing a semiparametric mixture model to estimate the local false discovery rates from the p-values. The two pillars of the proposed approach are Efron's empirical null principle and log-concave density estimation for the alternative distribution. Our method outperforms other existing methods, in particular when the proportion of null is not that high. It is robust against the misspecification of alternative distribution. A unique feature of our method is that it can be extended to compute the local false discovery rates by combining multiple lists of p-values. As a reference see Seok-Oh Jeong, Dongseok Choi and Woncheol Jang (2020) <doi.org/10.1214/20-AOAS1341>.
-License: What license is it under?
+Title: Fast Multivariate Log-Concave Density Estimation
+Version: 1.0.2
+Authors@R: c(person("Fabian", "Rathke", role=c("aut", "cre"),
+                    email = "frathke@gmail.com"),
+             person("Christoph", "Schnörr", role="aut"),
+             person("Giovanni", "Garberoglio", role="cph"))
+Description: A fast solver for the maximum likelihood estimator (MLE) of a 
+  multivariate log-concave probability function. Given a sample X, it estimates 
+  a non-parametric density function whose logarithm is a concave function. Many 
+  well-known parametric densities belong to that class, among them the normal 
+  density, the uniform density, the exponential distribution and many more. This
+  package provides functions for the estimation of a log-concave density and
+  a mixture of log-concave densities in multiple dimensions. While being similar
+  to the package LogConcDEAD, fmlogcondens provides much fast run times for 
+  large samples (>= 250 points). As a reference see Fabian Rathke, Christoph 
+  Schnörr (2015), <doi:10.1515/auom-2015-0053>.
+License: GPL (>= 2)
+Depends: R (>= 3.2.4)
+Imports: geometry, MASS, mclust, mvtnorm
 Encoding: UTF-8
 LazyData: true
-Suggests: knitr, rmarkdown
+Suggests: LogConcDEAD, knitr, rmarkdown
+VignetteBuilder: knitr
 RoxygenNote: 7.1.1
+NeedsCompilation: yes
+Packaged: 2018-03-23 10:48:53 UTC; fabian
+Author: Fabian Rathke [aut, cre],
+  Christoph Schnörr [aut],
+  Giovanni Garberoglio [cph]
+Maintainer: Fabian Rathke <frathke@gmail.com>
+Repository: CRAN
+Date/Publication: 2018-03-23 14:33:49 UTC
