@@ -44,19 +44,15 @@ sp.mix.1D <- function(z, tol = 5.0e-6, max.iter = 30, doplot = TRUE, thre.localF
   z <- as.numeric(z)
   n <- length(z)
 
-  ## Initial step
-  q0 <- quantile(z, probs = .9)
-  p.0 <- mean(z <= q0)
-  mu.0 <- mean(z[z <= q0])
-  sig.0 <- sd(z[z <= q0])
-
-  mu.1 <- mean(z[z > q0])
-  sig.1 <- sd(z[z > q0])
-  f1.tilde <- dnorm(z, mean = mu.1, sd = sig.1)
-
+  ## Initial step: normal mixture
+  nmEM <- normal.mixture.1d(z)
+  p.0 <- nmEM$p.0
+  mu.0 <- nmEM$mu.0
+  sig.0 <- nmEM$sigma.0
+  f1.tilde <- dnorm(z, mean = nmEM$mu.1, sd = nmEM$sigma.1)
   f <- gam <- rep(0, n)
 
-  ## EM-step
+  ## EM-step for SP mixture
   k <- 0; converged <- 0
   while ( (k < 3) | ((k < max.iter) & (!converged)) ) {
     k <- k + 1
@@ -117,4 +113,51 @@ sp.mix.1D <- function(z, tol = 5.0e-6, max.iter = 30, doplot = TRUE, thre.localF
               localfdr = gam, iter = k)
 
   return(res)
+}
+
+normal.mixture.1d <- function(z, tol = 5e-4, max.iter = 30)
+{
+  q0 <- quantile(z, probs = .9)
+  p.0 <- mean(z <= q0)
+  mu.0 <- mean(z[z <= q0])
+  sig.0 <- sd(z[z <= q0])
+  f.0 <- dnorm(z, mean = mu.0, sd = sig.0)
+
+  mu.1 <- mean(z[z > q0])
+  sig.1 <- sd(z[z > q0])
+  f.1 <- dnorm(z, mean = mu.1, sd = sig.1)
+  
+  diff <- 100
+  while ( (k < 3)|((k < max.iter) & (diff > tol)) ) {
+    k <- k + 1
+
+    ## E-step
+    term1 <- p.0*f.0
+    term2 <- term1 + (1-p.0)*f.1
+    gam <- term1/term2
+
+    ## M-step
+    new.p.0 <- mean(gam)
+    new.mu.0 <- sum(z*gam)/sum(gam)
+    dev <- (z - new.mu.0)*sqrt(gam)
+    new.sig.0 <- sum(dev*dev)/sum(gam)
+    f.0 <- dnorm(z, mean = new.mu.0, sd = new.sig.0)
+    new.mu.1 <- sum(z*(1 - gam))/sum(1 - gam)
+    dev <- (z - new.mu.1)*sqrt(1 - gam)
+    new.sig.1 <- sum(dev*dev)/sum(1 - gam)
+    f.1 <- dnorm(z, mean = new.mu.1, sd = new.sig.1)
+
+    ## Update
+    diff <- max(abs((new.mu.0 - mu.0)),
+                abs((new.sig.0 - sig.0)),
+                abs((new.mu.1 - mu.1)),
+                abs((new.sig.1 - sig.1)),
+                abs((new.p.0 - p.0)))
+    p.0 <- new.p.0
+    mu.0 <- new.mu.0
+    sig.0 <- new.sig.0
+    mu.1 <- new.mu.1
+    sig.1 <- new.sig.1
+  }  
+  return(list(iter = k, p.0 = p.0, mu.0 = mu.0, sigma.0 = sig.0, mu.1 = mu.1, sigma.1 = sig.1))
 }
