@@ -127,7 +127,7 @@ normal.mixture.1d <- function(z, tol = 5e-4, max.iter = 30)
   sig.1 <- sd(z[z > q0])
   f.1 <- dnorm(z, mean = mu.1, sd = sig.1)
   
-  diff <- 100
+  k <- 0; diff <- 100
   while ( (k < 3)|((k < max.iter) & (diff > tol)) ) {
     k <- k + 1
 
@@ -140,11 +140,11 @@ normal.mixture.1d <- function(z, tol = 5e-4, max.iter = 30)
     new.p.0 <- mean(gam)
     new.mu.0 <- sum(z*gam)/sum(gam)
     dev <- (z - new.mu.0)*sqrt(gam)
-    new.sig.0 <- sum(dev*dev)/sum(gam)
+    new.sig.0 <- sqrt(sum(dev*dev)/sum(gam))
     f.0 <- dnorm(z, mean = new.mu.0, sd = new.sig.0)
     new.mu.1 <- sum(z*(1 - gam))/sum(1 - gam)
     dev <- (z - new.mu.1)*sqrt(1 - gam)
-    new.sig.1 <- sum(dev*dev)/sum(1 - gam)
+    new.sig.1 <- sqrt(sum(dev*dev)/sum(1 - gam))
     f.1 <- dnorm(z, mean = new.mu.1, sd = new.sig.1)
 
     ## Update
